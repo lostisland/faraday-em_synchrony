@@ -1,38 +1,65 @@
-# Faraday Adapter Template
+# Faraday Em::Synchrony adapter
 
-This repo is a template for building [Faraday][faraday] adapters.
+This gem is a [Faraday][faraday] adapter for the [Em::Synchrony][em_synchrony] library.
 Faraday is an HTTP client library that provides a common interface over many adapters.
-Every adapter is defined into it's own gem. Use this repository to create your own adapter gem.
+Every adapter is defined into its own gem. This gem defines the adapter for Em::Synchrony.
 
-## Getting Started
+## Installation
 
-### Setting up and cloning the repo
+Add these lines to your application's Gemfile:
 
-You can start using GitHub's [Use this template][use-template] button.
-![Use this template](https://docs.github.com/assets/images/help/repository/use-this-template-button.png)
+```ruby
+gem 'em-http-request', '>= 1.1'
+gem 'em-synchrony', '>= 1.0.3'
+gem 'faraday-em_http', '~> 1.0'
+gem 'faraday-em_synchrony'
+```
 
-This will create a repository based off from this template.
-After that is created, you can clone it locally to start working on it.
+And then execute:
 
-### Refactoring the template
+    $ bundle install
 
-The next step is for you to find and replace all the "parametrised" names in this template and change them to make it unique.
-First of all, you should decide on the name of your adapter.
-The current convention (which is by no means mandatory) is to call adapter gems as `faraday-<adapter_name>`.
-Here are some examples:
+Or install them yourself as:
 
-* `HTTP`: [`faraday-http`][faraday-http]
-* `Net::HTTP`: [`faraday-net_http`][faraday-net_http]
+    $ gem install em-http-request -v '>= 1.1'
+    $ gem install em-synchrony -v '>= 1.0.3'
+    $ gem install faraday-em_http -v '~> 1.0'
+    $ gem install faraday-em_synchrony
 
-In this template repository, the placeholder for your chosen adapter name is `MyAdapter` (`my_adapter`).
-So once you decide on the final name you want to use you should update all occurrences of `MyAdapter` and all files with `my_adapter` in their name with the new name you chose.
+## Usage
 
-### Main implementation
+Configure your Faraday connection to use this adapter like this:
 
-The bulk of the implementation is in the `Faraday::Adapter::MyAdapter` class.
-We've added lots of comments in there to guide you through it, but if you have any doubt/question please don't hesitate to get in touch! 
+```ruby
+connection = Faraday.new(url, conn_options) do |conn|
+  conn.adapter(:em_synchrony)
+end
+```
+
+For more information on how to setup your Faraday connection and adapters usage, please refer to the [Faraday Website][faraday-website].
+
+## Development
+
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](rubygems).
+
+## Contributing
+
+Bug reports and pull requests are welcome on [GitHub][repo].
+
+## License
+
+The gem is available as open source under the terms of the [license][license].
+
+## Code of Conduct
+
+Everyone interacting in the Faraday Em::Synchrony adapter project's codebase, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct][code-of-conduct].
 
 [faraday]: https://github.com/lostisland/faraday
-[faraday-http]: https://github.com/lostisland/faraday-http
-[faraday-net_http]: https://github.com/lostisland/faraday-net_http
-[use-template]: https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template
+[faraday-website]: https://lostisland.github.io/faraday
+[em_synchrony]: https://github.com/igrigorik/em-synchrony
+[rubygems]: https://rubygems.org
+[repo]: https://github.com/lostisland/faraday-em_synchrony
+[license]: https://github.com/lostisland/faraday-em_synchrony/blob/main/LICENSE.md
+[code-of-conduct]: https://github.com/lostisland/faraday-em_synchrony/blob/main/CODE_OF_CONDUCT.md
