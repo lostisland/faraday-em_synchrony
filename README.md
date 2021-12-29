@@ -9,9 +9,6 @@ Every adapter is defined into its own gem. This gem defines the adapter for Em::
 Add these lines to your application's Gemfile:
 
 ```ruby
-gem 'em-http-request', '>= 1.1'
-gem 'em-synchrony', '>= 1.0.3'
-gem 'faraday-em_http', '~> 1.0'
 gem 'faraday-em_synchrony'
 ```
 
@@ -21,22 +18,55 @@ And then execute:
 
 Or install them yourself as:
 
-    $ gem install em-http-request -v '>= 1.1'
-    $ gem install em-synchrony -v '>= 1.0.3'
-    $ gem install faraday-em_http -v '~> 1.0'
     $ gem install faraday-em_synchrony
 
 ## Usage
 
-Configure your Faraday connection to use this adapter like this:
+This adapter can be used to make parallel requests using EventMachine.
 
+The key difference between this and [EM-Http](https://github.com/lostisland/faraday-em_http) is that it uses fibers.
+For more information see igrigorik's blog posts on the matter:
+
+- [fibers-cooperative-scheduling-in-ruby](https://www.igvita.com/2009/05/13/fibers-cooperative-scheduling-in-ruby/)
+- [untangling-evented-code-with-ruby-fibers](https://www.igvita.com/2010/03/22/untangling-evented-code-with-ruby-fibers)
+
+**Error handling and responses have a slightly different behaviour and structure in some cases. Please run thorough testing scenarios, including connection failures and SSL failures**
+
+### Base request
 ```ruby
-connection = Faraday.new(url, conn_options) do |conn|
-  conn.adapter(:em_synchrony)
+require 'faraday/em_synchrony'
+
+conn = Faraday.new(...) do |f|
+  # no custom options available
+  f.adapter :em_synchrony
 end
 ```
 
-For more information on how to setup your Faraday connection and adapters usage, please refer to the [Faraday Website][faraday-website].
+### Parallel Requests
+
+```ruby
+require 'faraday/em_synchrony'
+
+urls = Array.new(5) { 'http://127.0.0.1:3000' }
+
+conn = Faraday::Connection.new do |builder|
+  builder.adapter :em_synchrony
+end
+
+begin
+  conn.in_parallel do
+    puts "Parallel manager: #{conn.parallel_manager}"
+
+    @responses = urls.map do |url|
+      conn.get(url)
+    end
+  end
+end
+
+# Gather responses outside of block
+puts @responses.map(&:status).join(', ')
+puts @responses.map(&:status).compact.count
+```
 
 ## Development
 
